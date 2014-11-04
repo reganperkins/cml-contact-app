@@ -1,5 +1,6 @@
 require 'csv'
 # require_relative 'contacts.csv'
+#deals with the contact data base directly
 
 class Contact
 
@@ -14,10 +15,11 @@ class Contact
     @last_name =last_name
     @email = email
     @phone = phone
-    @duplicate = false
+    # @duplicate = false
   end
  
   def to_s(first_name, last_name, email, phone)
+    # return string 
     puts "#{first_name} #{last_name} Email: #{email} Phone: #{phone}"
   end
 
@@ -29,26 +31,14 @@ class Contact
   end
 
   def create_contact # (first_name, last_name, email, phone)
-    #   # TODO: Will initialize a contact as well as add it to the list of contacts
-    #   # if input == 'new'
-    #   # prompt email
-    #   # prompt full name 
-    #   # add to contact_array[] (in a hash?) as strings
-    #   # then store contact in CSV file
-    #   # return new contact id
-    #   # ^ prevent duplicate entries ie if emails are the same
-    #   # puts 'this contact already exists'
-
-    #   # Note: This does not mean that you need to 
-    #   # store an ID in the file. How can you represent 
-    #   # each row in the CSV as an ID?
 
     puts "What is your email?"
     @email = STDIN.gets.chomp
 
     CSV.foreach('contacts.csv') do |row| 
       puts " in method!"
-      if row == @email 
+      # if statment not working
+      if row[3] == @email 
         @duplicate = true
         puts "its true!"
       end
@@ -65,21 +55,14 @@ class Contact
     puts "What is your last name?"
     last_name = STDIN.gets.chomp
 
-    file = 'contacts.csv'
-    @id = file.readlines.size + 1
+    id = File.foreach('contacts.csv').count + 1
 
     CSV.open("contacts.csv", "a") do |contacts_list| 
-      contacts_list << "#{@id}, #{first_name}, #{last_name}, #{email}, #{phone}"
+      contacts_list << [id, first_name, last_name, email, phone]
     end
+
     puts "Thanks! Your id number is #{id}"
   end
-
-  #could use a struct???
-  # contacts = CSV.foreach('contacts.csv') do |row|
-  #   if row[3] == @email
-  #     puts "That user already exists"
-  #   end
-  # end
 
   def find(string)
   # TODO: Will find and return contact by index
@@ -94,6 +77,10 @@ class Contact
   end
 
   def list
+    # return the list of contacts, as is 
+    #Reach out to ContactDatabase and ask for 
+    # an Array of contacts
+
     CSV.foreach('contacts.csv') do |row|
       puts "#{row[1]} #{row[2]} #{row[3]} #{row[4]}"
     end
