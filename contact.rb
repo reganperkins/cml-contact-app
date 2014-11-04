@@ -6,7 +6,7 @@ class Contact
   class DuplicateUser < StandardError
   end
  
-  attr_accessor :first_name, :last_name, :email, :phone
+  attr_accessor :first_name, :last_name, :email, :phone, :duplicate
  
   def initialize#(first_name, last_name, email, phone)
     # TODO: assign local variables to instance variables
@@ -14,6 +14,7 @@ class Contact
     @last_name =last_name
     @email = email
     @phone = phone
+    @duplicate = false
   end
  
   def to_s(first_name, last_name, email, phone)
@@ -44,10 +45,17 @@ class Contact
 
     puts "What is your email?"
     @email = STDIN.gets.chomp
-    #yield  #figure out how to do this to stop duplicates 
-      #should i throw an exception instead?
+
+    CSV.foreach('contacts.csv') do |row| 
+      puts " in method!"
+      if row == @email 
+        @duplicate = true
+        puts "its true!"
+      end
+    end
+
       begin
-        raise DuplicateUser if CSV.foreach('contacts.csv') { |row| puts "That user already exists" if row[3] == @email }
+        raise DuplicateUser if @duplicate
       rescue DuplicateUser
         puts "That user already exists"
       end
@@ -58,7 +66,7 @@ class Contact
     last_name = STDIN.gets.chomp
 
     file = 'contacts.csv'
-    @id = file.readlines.size
+    @id = file.readlines.size + 1
 
     CSV.open("contacts.csv", "a") do |contacts_list| 
       contacts_list << "#{@id}, #{first_name}, #{last_name}, #{email}, #{phone}"
@@ -86,7 +94,7 @@ class Contact
   end
 
   def list
-    contacts = CSV.foreach('contacts.csv') do |row|
+    CSV.foreach('contacts.csv') do |row|
       puts "#{row[1]} #{row[2]} #{row[3]} #{row[4]}"
     end
       # exit app how????
@@ -96,7 +104,7 @@ class Contact
     puts "Please enter the id of the contact you are looking for"
     id = STDIN.gets.chomp
 
-    contacts = CSV.foreach('contacts.csv') do |row|
+    CSV.foreach('contacts.csv') do |row|
       if row[0] == id
         puts "#{row[1]} #{row[2]} #{row[3]} #{row[4]}"
       end
