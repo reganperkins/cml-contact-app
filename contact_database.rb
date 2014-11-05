@@ -1,28 +1,33 @@
 ## TODO: Implement CSV reading/writing
 require 'csv'
 
-#no puts
-# arrays and contact data asks for info from this class
-
-
-
-# # out puts data per row as array
-# contacts = CSV.foreach('contacts.csv') do |row|
-#   puts row.inspect
-# end
-
 class Database
+
+  def CSV_read
+    CSV_readlines = []
+    CSV.foreach('contacts.csv') do |row|
+      CSV_readlines << row
+    end
+  end
+
+  def CSV_write  
+    id = File.foreach('contacts.csv').count + 1
+    CSV.open("contacts.csv", "a") do |contacts_list| 
+      contacts_list << [id, first_name, last_name, email]
+    end
+    id
+  end
+
+end
+
+
 
   def self.list_contacts
     all_contacts = []
     contacts = CSV.foreach('contacts.csv') do |row|
       all_contacts << row
     end
-    all_contacts # .flatten
-   #CSV.foreach('contacts.csv') do |row|
-      # puts "#{row[1]} #{row[2]} #{row[3]} #{row[4]}"
-    #end
-      # exit app how????
+    all_contacts
   end
 
   def self.add_to_csv(first_name, last_name, email)
@@ -66,14 +71,3 @@ class Database
   end
 
 end
-
-
-# # exception errors
-#   duplicate_user_error = CSV.foreach('contacts.csv') do |row| 
-#       #puts " in method!"
-#       # if statment not working
-#       if row[3] == @email 
-#         @duplicate = true
-#         # puts "its true!"
-#       end
-#     end
